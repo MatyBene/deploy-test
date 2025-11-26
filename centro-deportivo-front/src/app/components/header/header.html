@@ -1,0 +1,71 @@
+<header>
+    <a routerLink="/"> 
+        <img src="\assets\img\logo.png" class="logo" >
+    </a>
+    
+    <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <nav [class.active]="menuOpen">
+        <ul>
+            @if (authService.getUserRole() === 'INSTRUCTOR') {
+                <li>
+                    <a routerLink="/activity-list/my-activities" (click)="closeMenu()">Mis actividades</a>
+                </li>
+
+                <li>
+                    <a routerLink="/instructors/members" (click)="closeMenu()">Socios</a>
+                </li>
+
+                <li>
+                    <a routerLink="/instructors/register-member" (click)="closeMenu()">Registrar socio</a>
+                </li>
+            } @else {
+                <li>
+                    <a routerLink="/activity-list" (click)="closeMenu()">Actividades</a>
+                </li>
+            }
+
+            @if (authService.getUserRole() !== 'ADMIN') {
+                <li>
+                    <a routerLink="/motivation" (click)="closeMenu()">Motivación</a>
+                </li>
+                @if (authService.isLoggedIn()) {
+                    <li>
+                        <a routerLink="/routines" (click)="closeMenu()">Rutinas</a>
+                    </li>
+                }
+            }
+
+            @if(authService.getUserRole() === 'ADMIN') {
+                <li>
+                    <a routerLink="/users" (click)="closeMenu()">Usuarios</a>
+                </li>
+                <li>
+                    <a routerLink="/admin/register" (click)="closeMenu()">Registrar</a>
+                </li>
+            }
+            
+            @if (!authService.isLoggedIn()) {
+                <li>
+                    <a routerLink="/public/login" (click)="closeMenu()">Iniciar sesión</a>
+                </li>
+                <li>
+                    <a routerLink="/public/register" (click)="closeMenu()">Registrarse</a>
+                </li>
+            }
+            
+            @if (authService.isLoggedIn()) {
+                <li>
+                    <a routerLink="/profile" (click)="closeMenu()">Perfil</a>
+                </li>
+                <li>
+                    <a (click)="logout()" style="cursor: pointer;">Cerrar sesión</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</header>

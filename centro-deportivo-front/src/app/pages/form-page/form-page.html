@@ -1,0 +1,104 @@
+<section class="title-section">
+    <h1>{{ isEditMode ? 'EDITAR PERFIL' : 'REGISTRO DE NUEVO MIEMBRO' }}</h1>
+    <p>{{ isEditMode ? 'Actualiza tu información personal.' : 'Completa el siguiente formulario para unirte a nuestra comunidad. Forjamos campeones y te ayudamos a alcanzar tus objetivos deportivos.' }}</p>
+</section>
+
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+        <fieldset>
+            <label for="name">Nombre</label>
+            <input type="text" id="name" formControlName="name">
+            <app-field-error [control]="name"></app-field-error>
+        </fieldset>
+
+        <fieldset>
+            <label for="lastname">Apellido</label>
+            <input type="text" id="lastname" formControlName="lastname">
+            <app-field-error [control]="lastname"></app-field-error>
+        </fieldset>
+    </div>
+
+    <div class="form-row">
+        <fieldset>
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" formControlName="dni">
+            <app-field-error [control]="dni" [serverError]="serverErrors['dni']"></app-field-error>
+        </fieldset>
+
+        <fieldset>
+            <label for="birthdate">Fecha de nacimiento</label>
+            <input type="date" id="birthdate" formControlName="birthdate">
+            <app-field-error [control]="birthdate"></app-field-error>
+        </fieldset>
+    </div>
+
+    <div class="form-row">
+        <fieldset>
+            <label for="phone">Celular</label>
+            <input type="text" id="phone" formControlName="phone">
+            <app-field-error [control]="phone"></app-field-error>
+        </fieldset>
+
+        <fieldset>
+            <label for="email">Email</label>
+            <input type="email" id="email" formControlName="email">
+            <app-field-error [control]="email" [serverError]="serverErrors['email']"></app-field-error>
+        </fieldset>
+    </div>
+
+    @if (isAdminRegisterMode) {
+        <fieldset>
+            <label for="role">Tipo de usuario</label>
+            <select id="role" formControlName="role">
+            <option value="MEMBER">Socio</option>
+            @if (currentAdmin?.permissionLevel === 'SUPER_ADMIN' || currentAdmin?.permissionLevel === 'USER_MANAGER' ) {
+                <option value="INSTRUCTOR">Instructor</option>
+            }
+            @if (currentAdmin?.permissionLevel === 'SUPER_ADMIN') {
+                <option value="ADMIN">Administrador</option>
+            }
+            </select>
+            <app-field-error [control]="role"></app-field-error>
+        </fieldset>
+    }
+
+    @if (!isEditMode) {
+        @if (isAdminRegisterMode && role?.value === 'ADMIN') {
+            <fieldset>
+            <label for="permissionLevel">Tipo de administrador</label>
+            <select id="permissionLevel" formControlName="permissionLevel">
+            <option value="USER_MANAGER">Administrador de usuarios</option>
+            <option value="FINANCE_ADMIN">Administrador de finanzas</option>
+            <option value="SUPER_ADMIN">Administrador control total</option>
+            </select>
+            <app-field-error [control]="permissionLevel"></app-field-error>
+        </fieldset>
+        }
+
+        @if (isAdminRegisterMode && role?.value === 'INSTRUCTOR') {
+            <fieldset>
+                <label for="specialty">Especialidad</label>
+                <input type="text" id="specialty" formControlName="specialty">
+                <app-field-error [control]="specialty"></app-field-error>
+            </fieldset>
+        }
+
+        <div class="form-row">
+            <fieldset>
+                <label for="username">Nombre de usuario</label>
+                <input type="text" id="username" formControlName="username">
+                <app-field-error [control]="username" [serverError]="serverErrors['username']"></app-field-error>
+            </fieldset>
+
+            <fieldset>
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" formControlName="password">
+                <app-field-error [control]="password" [customErrors]="{
+                    'pattern': 'La contraseña debe contener al menos: 1 mayúscula, 1 minúscula, 1 número, 1 carácter especial y no tener espacios'
+                }"></app-field-error>
+            </fieldset>
+        </div>
+    }
+
+    <button type="submit" [disabled]="userForm.invalid">{{ isEditMode ? 'Guardar cambios' : 'Crear cuenta' }}</button>
+</form>
